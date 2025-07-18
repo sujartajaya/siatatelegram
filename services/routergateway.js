@@ -21,4 +21,15 @@ async function downloadCSV(url, filename) {
   });
 }
 
-export { downloadCSV };
+async function addMacBinding(data) {
+  const url = "http://localhost/telegram/mac/binding";
+  try {
+    const response = await axios.post(url, data);
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error.message);
+  }
+}
+
+export { downloadCSV, addMacBinding };

@@ -3,16 +3,22 @@ import convertGifToJpg from "./services/gif2jpg.js";
 import { getUser, registerUser } from "./services/usertelegram.js";
 import { downloadCSV } from "./services/routergateway.js";
 import fs from "fs";
+import { macbinding } from "./services/macbinding.js";
 
 const token = "6528575565:AAESksJ7VohEb1gq9hBUCVH45CLYtvrM6Eo";
 
 const bot = new TelegramBot(token, { polling: true });
 
 const menu1 = [
-  [{ text: "Traffic Wan", callback_data: "waniface" }],
-  [{ text: "Traffic WiFi", callback_data: "wifiiface" }],
-  [{ text: "Traffic BOH", callback_data: "bohiface" }],
-  [{ text: "Mac Binding to csv", callback_data: "mac2csv" }],
+  [
+    { text: "Traffic Wan", callback_data: "waniface" },
+    { text: "Traffic WiFi", callback_data: "wifiiface" },
+  ],
+  [
+    { text: "Traffic BOH", callback_data: "bohiface" },
+    { text: "Mac Binding to csv", callback_data: "mac2csv" },
+  ],
+  [{ text: "User Actives to csv", callback_data: "activesuser2csv" }],
 ];
 
 const menu2 = [
@@ -60,6 +66,8 @@ bot.onText(/\/start/, async (msg) => {
     );
   }
 });
+
+macbinding(bot);
 
 bot.on("callback_query", async (callbackQuery) => {
   const msg = callbackQuery.message;
@@ -113,7 +121,7 @@ bot.on("callback_query", async (callbackQuery) => {
       username: username,
       phone: phone === "undefined" ? "" : phone,
     };
-    console.log(datauser);
+    // console.log(datauser);
     const reg = await registerUser(datauser);
     console.log(reg);
     bot.sendMessage(
@@ -123,15 +131,31 @@ bot.on("callback_query", async (callbackQuery) => {
   }
 
   if (data === "mac2csv") {
-    const csvUrl = "http://localhost/telegram/csv/macbinding"; // Ganti URL CSV sesuai kebutuhan
-
+    const csvUrl = "http://localhost/telegram/csv/macbinding";
     bot.sendMessage(id, "Mengunduh file CSV...");
-
     try {
       const filePath = await downloadCSV(csvUrl, "macbinding.csv");
 
       await bot.sendDocument(id, filePath, {
         caption: "Berikut file CSV Mac Binding.",
+      });
+
+      // Optional: Hapus file setelah dikirim
+      fs.unlinkSync(filePath);
+    } catch (error) {
+      console.error("Gagal mengunduh atau mengirim file:", error.message);
+      bot.sendMessage(id, "Gagal mengunduh atau mengirim file.");
+    }
+  }
+
+  if (data === "activesuser2csv") {
+    const csvUrl = "http://localhost/telegram/csv/useractive";
+    bot.sendMessage(id, "Mengunduh file CSV...");
+
+    try {
+      const filePath = await downloadCSV(csvUrl, "useractives.csv");
+      await bot.sendDocument(id, filePath, {
+        caption: "Berikut file CSV User Actives.",
       });
 
       // Optional: Hapus file setelah dikirim
