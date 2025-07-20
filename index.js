@@ -4,6 +4,7 @@ import { getUser, registerUser } from "./services/usertelegram.js";
 import { downloadCSV } from "./services/routergateway.js";
 import fs from "fs";
 import { macbinding } from "./services/macbinding.js";
+import { csvEmail } from "./services/csvemail.js";
 
 const token = "6528575565:AAESksJ7VohEb1gq9hBUCVH45CLYtvrM6Eo";
 
@@ -68,6 +69,8 @@ bot.onText(/\/start/, async (msg) => {
 });
 
 macbinding(bot);
+
+csvEmail(bot);
 
 bot.on("callback_query", async (callbackQuery) => {
   const msg = callbackQuery.message;
