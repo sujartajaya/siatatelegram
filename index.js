@@ -1,7 +1,12 @@
 import TelegramBot from "node-telegram-bot-api";
 import convertGifToJpg from "./services/gif2jpg.js";
 import { getUser, registerUser } from "./services/usertelegram.js";
-import { downloadCSV } from "./services/routergateway.js";
+import {
+  downloadCSV,
+  getTraffic,
+  menuWanTraffic,
+  parseHtmlFromUrl,
+} from "./services/routergateway.js";
 import fs from "fs";
 import { macbinding } from "./services/macbinding.js";
 import { csvEmail } from "./services/csvemail.js";
@@ -82,15 +87,28 @@ bot.on("callback_query", async (callbackQuery) => {
   const phone = msg.chat.phone_number;
 
   if (data === "waniface") {
-    await convertGifToJpg(
-      "http://222.165.249.230/graphs/iface/ether1/daily.gif",
-      "output.jpg"
-    );
-    const waniface = "output.jpg";
+    // /** mengambil data dalam box */
+    // const data_traffic = await parseHtmlFromUrl(
+    //   "http://localhost/traffic/get/wan"
+    // );
+    // // console.log(data_traffic);
+    // const message = `<b>Traffic WAN</b>\n<b>${data_traffic[0].title}</b>
+    //   <i>Max In: ${data_traffic[0].data.maxIn}Mb Average In: ${data_traffic[0].data.averageIn}Mb Current In: ${data_traffic[0].data.currentIn}Mb</i>
+    //   <i>Max Out: ${data_traffic[0].data.maxOut}Mb Average Out: ${data_traffic[0].data.averageOut}Mb Current Out: ${data_traffic[0].data.currentOut}Mb</i>
+    //   `;
 
-    bot.sendPhoto(msg.chat.id, waniface, {
-      caption: "Traffic Interface WAN.",
-    });
+    // await convertGifToJpg(
+    //   "http://222.165.249.230/graphs/iface/ether1/daily.gif",
+    //   "output.jpg"
+    // );
+    // const waniface = "output.jpg";
+
+    // bot.sendPhoto(msg.chat.id, waniface, {
+    //   caption: `${message}`,
+    //   parse_mode: "HTML",
+    // });
+    // getTraffic(bot, id, "wan", "ether1", 0);
+    menuWanTraffic(bot, id);
   }
 
   if (data === "wifiiface") {

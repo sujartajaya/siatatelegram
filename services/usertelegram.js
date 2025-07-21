@@ -88,4 +88,45 @@ async function downloadGuestsFile(start_date, end_date) {
   }
 }
 
-export { getUser, registerUser, getToken, downloadGuestsFile };
+function isValidDateFormat(dateStr) {
+  // Regex untuk validasi format tanggal YYYY-MM-DD
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateStr)) return false;
+
+  // Cek apakah tanggal valid (contoh: 2025-02-30 tidak valid)
+  const date = new Date(dateStr);
+  return (
+    date instanceof Date &&
+    !isNaN(date) &&
+    dateStr === date.toISOString().slice(0, 10)
+  );
+}
+
+function validateDateRange(startDateStr, endDateStr) {
+  if (!isValidDateFormat(startDateStr) || !isValidDateFormat(endDateStr)) {
+    return {
+      valid: false,
+      message: "Format tanggal tidak valid. Gunakan format YYYY-MM-DD.",
+    };
+  }
+
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  if (startDate >= endDate) {
+    return {
+      valid: false,
+      message: "Tanggal awal harus lebih kecil dari tanggal akhir.",
+    };
+  }
+
+  return { valid: true, message: "Rentang tanggal valid." };
+}
+
+export {
+  getUser,
+  registerUser,
+  getToken,
+  downloadGuestsFile,
+  validateDateRange,
+};
